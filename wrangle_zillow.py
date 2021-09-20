@@ -91,6 +91,27 @@ def handle_missing_values(df, prop_required_columns=0.5, prop_required_row=0.75)
     df = df.dropna(axis=0, thresh=threshold)
     return df
 
+#The following function will remove outliers based on the iqr
+def remove_outliers(df, k, col_list):
+    ''' remove outliers from a list of columns in a dataframe 
+        and return that dataframe
+    '''
+    
+    for col in col_list:
+
+        q1, q3 = df[col].quantile([.25, .75])  # get quartiles
+        
+        iqr = q3 - q1   # calculate interquartile range
+        
+        upper_bound = q3 + k * iqr   # get upper bound
+        lower_bound = q1 - k * iqr   # get lower bound
+
+        # return dataframe without outliers
+        
+        df = df[(df[col] > lower_bound) & (df[col] < upper_bound)]
+        
+    return df
+
 #The following function will prepare the zillow data by removing or imputing null values, reducing the property types to single units,
 #and dropping unnecessary columns
 def prepare_zillow(zillow):
@@ -119,5 +140,10 @@ def prepare_zillow(zillow):
 
     #Drop all other missing entries
     zillow.dropna(inplace = True)
+
+    #Remove outliers from numerical columns
+    cols_to_evaluate = zillow.select_dtypes('number').columns
+
+    zillow = remove_outliers(zillow, 2.5, cols_to_evaluate)
 
     return zillow

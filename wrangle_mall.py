@@ -76,7 +76,7 @@ def train_validate_test_split(df, seed = 123):
     The function returns, in this order, train, validate and test dataframes. 
     '''
 
-    df = df.drop(columns = ['customer_id_outliers_upper', 'age_outliers_upper', 'annual_income_outliers_upper', 'spending_score_outliers_upper'])
+    #df = df.drop(columns = ['customer_id_outliers_upper', 'age_outliers_upper', 'annual_income_outliers_upper', 'spending_score_outliers_upper'])
 
     train_validate, test = train_test_split(df, test_size=0.2, 
                                             random_state=seed)
